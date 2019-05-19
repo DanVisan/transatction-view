@@ -19,6 +19,6 @@ public class KafkaReceiver {
 
     @StreamListener(KafkaChannels.EVENTS_INPUT)
     public void receiveEvents(final TransactionModel transaction) {
-        balanceService.updateBalance(transaction);
+        balanceService.updateBalances(transaction);
     }
 }

@@ -16,8 +16,8 @@ import javax.persistence.Id;
 @Builder
 public class Balance {
     @Id
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "client_id")
+    private String clientId;
     private double balance;
     @Column(name = "last_updated")
     private String lastUpdated;

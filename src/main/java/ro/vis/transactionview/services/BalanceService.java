@@ -18,16 +18,39 @@ public class BalanceService {
         this.balanceRepository = Objects.requireNonNull(balanceRepository, "balanceRepository must not be null!");
     }
 
-    public void updateBalance(final TransactionModel transactionModel) {
-        Balance balance = balanceRepository.findOne(transactionModel.getReceiver());
+    public void updateBalances(final TransactionModel transactionModel) {
+        updateSenderBalance(transactionModel);
+        updateReceiverBalance(transactionModel);
+    }
+
+    private void updateSenderBalance(final TransactionModel transactionModel) {
+        Balance balance = balanceRepository.findOne(transactionModel.getSender());
         if (balance != null) {
-            double newBalanceValue = balance.getBalance() + transactionModel.getValue();
+            double newBalanceValue = balance.getBalance() - transactionModel.getValue();
             Balance newBalance = Balance.builder()
-                    .userId(balance.getUserId())
+                    .clientId(balance.getClientId())
                     .balance(newBalanceValue)
                     .lastUpdated(transactionModel.getTimestamp())
                     .build();
             balanceRepository.save(newBalance);
         }
+    }
+
+    private void updateReceiverBalance(final TransactionModel transactionModel) {
+        Balance balance = balanceRepository.findOne(transactionModel.getReceiver());
+        if (balance != null) {
+            double newBalanceValue = balance.getBalance() + transactionModel.getValue();
+            Balance newBalance = Balance.builder()
+                    .clientId(balance.getClientId())
+                    .balance(newBalanceValue)
+                    .lastUpdated(transactionModel.getTimestamp())
+                    .build();
+            balanceRepository.save(newBalance);
+        }
+    }
+
+
+    public Balance getBalanceByClientId(final String clientId) {
+        return balanceRepository.findOne(clientId);
     }
 }
